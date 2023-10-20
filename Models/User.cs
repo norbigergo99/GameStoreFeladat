@@ -7,20 +7,19 @@ namespace GameStoreBeGNorbi.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required, DataType(DataType.EmailAddress), EmailAddress, StringLength(150)]
-        public string Email { get; set; } 
-        [Required, StringLength(255)]
+        [Required, DataType(DataType.EmailAddress), EmailAddress, MaxLength(150)]
+        public string Email { get; set; }
+        [Required, MaxLength(255)]
         public string PasswordHash { get; set; }
-        [Required, StringLength(255)]
-        public string PasswordSalt { get; set; } 
-        public virtual ICollection<VideoGame> VideoGames { get; set; }
+        [Required, MaxLength(255)]
+        public string PasswordSalt { get; set; }
+        public virtual ICollection<VideoGame> VideoGames { get; } = new List<VideoGame>();
 
         public User (string email, string passwordHash, string passwordSalt)
         {
             Email = email;
             PasswordHash = passwordHash;
             PasswordSalt = passwordSalt;
-            VideoGames = new List<VideoGame> ();
         }
     }
 }

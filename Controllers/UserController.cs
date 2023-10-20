@@ -33,22 +33,26 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Include(a => a.VideoGames).Where(a => a.Id.Equals(id)).FirstOrDefaultAsync();
             if (user == null) { return NotFound(); }
             return Ok(user);
         }
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserDTO dto)
+        public async Task<IActionResult> Create([FromBody] CreateUserDTO dto)
         {
             var salt = PasswordHasher.GenerateSalt();
             var passwordHasher = new PasswordHasher();
-            var passwordHash = passwordHasher.HashPassword(dto.Password, salt);
+            var hash = passwordHasher.HashPassword(dto.Password, salt);
 
             try
             {
-                var user = new User(dto.Email, passwordHash, salt);
+                var user = new User(
+                    dto.Email,
+                    hash, 
+                    salt 
+                );
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -58,16 +62,25 @@ namespace GameStoreBeGNorbi.Controllers
                 return BadRequest(new { ErrorMessage = ex.Message });
             }
         }
+        [HttpPost("test")]
+        public async Task<IActionResult> Createtest([FromBody]User user)
+        {
+            if (user == null) { return BadRequest(); }
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
+
+        }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] string userChanges)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDTO userChanges)
         {
             var user = await _context.Users.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (user == null) { return NotFound(); }
-            var emailValidator = new EmailAddressAttribute();
-            if (emailValidator.IsValid(userChanges) == false) { return BadRequest(); }
-            user.Email = userChanges;
+            //var emailValidator = new EmailAddressAttribute();
+            //if (emailValidator.IsValid(userChanges.Email) == false) { return BadRequest(); }
+            user.Email = userChanges.Email;
             await _context.SaveChangesAsync();
             return Ok();
         }

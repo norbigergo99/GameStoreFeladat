@@ -17,9 +17,9 @@ namespace GameStoreBeGNorbi.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required, StringLength(100)]
+        [Required, MaxLength(100)]
         public string Title { get; set; } = null!;
-        [Required, StringLength(255)]
+        [Required, MaxLength(255)]
         public string Description { get; set; } = null!;
         [Required, EnumDataType(typeof(Type))]
         public Type Type { get; set; }
