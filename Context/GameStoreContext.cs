@@ -9,9 +9,9 @@ namespace GameStoreBeGNorbi.Context
         public GameStoreContext(DbContextOptions options) : base(options) {
         }
 
-        public DbSet<User> Users => Set<User>();
-        public DbSet<VideoGame> VideoGames => Set<VideoGame>();
-        public DbSet<UserVideoGame> UserVideoGame => Set<UserVideoGame>();
+        public DbSet<User> Users { get; set; } 
+        public DbSet<VideoGame> VideoGames { get; set; }
+        public DbSet<UserVideoGame> UserVideoGame {  get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -25,7 +25,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet]
         public async Task<IEnumerable<User>> GetAll()
         {
-            var all = await _context.Users.Include(a => a.VideoGames).ToListAsync();
+            var all = await _context.Users
+                .Include(a => a.VideoGames)
+                .ToListAsync();
             return all;
         }
 
@@ -33,8 +35,11 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(int id)
         {
-            var user = await _context.Users.Include(a => a.VideoGames).Where(a => a.Id.Equals(id)).FirstOrDefaultAsync();
-            if (user == null) { return NotFound(); }
+            var user = await _context.Users
+                .Include(a => a.VideoGames)
+                .Where(a => a.Id.Equals(id))
+                .FirstOrDefaultAsync();
+            if (user == null) { return NotFound(user); }
             return Ok(user);
         }
 
@@ -53,8 +58,10 @@ namespace GameStoreBeGNorbi.Controllers
                     hash, 
                     salt 
                 );
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
+                await _context.Users
+                    .AddAsync(user);
+                await _context
+                    .SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -62,26 +69,18 @@ namespace GameStoreBeGNorbi.Controllers
                 return BadRequest(new { ErrorMessage = ex.Message });
             }
         }
-        [HttpPost("test")]
-        public async Task<IActionResult> Createtest([FromBody]User user)
-        {
-            if (user == null) { return BadRequest(); }
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-            return Ok(user);
-
-        }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDTO userChanges)
         {
-            var user = await _context.Users.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if (user == null) { return NotFound(); }
-            //var emailValidator = new EmailAddressAttribute();
-            //if (emailValidator.IsValid(userChanges.Email) == false) { return BadRequest(); }
+            var user = await _context.Users
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+            if (user == null) { return NotFound(user); }
             user.Email = userChanges.Email;
-            await _context.SaveChangesAsync();
+            await _context
+                .SaveChangesAsync();
             return Ok();
         }
 
@@ -89,10 +88,14 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var user = await _context.Users.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if(user == null) { return NotFound(); }
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var user = await _context.Users
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+            if(user == null) { return NotFound(user); }
+            _context.Users
+                .Remove(user);
+            await _context
+                .SaveChangesAsync();
             return Ok();
         }
     }

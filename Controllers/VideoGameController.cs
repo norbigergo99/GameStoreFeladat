@@ -24,7 +24,8 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet]
         public async Task<IEnumerable<VideoGame>> GetAll()
         {
-            var all = await _context.VideoGames.ToListAsync();
+            var all = await _context.VideoGames
+                .ToListAsync();
             return all;
         }
 
@@ -32,8 +33,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VideoGame>> GetById(int id)
         {
-            var game = await _context.VideoGames.FindAsync(id);
-            if (game == null) { return NotFound(); }
+            var game = await _context.VideoGames
+                .FindAsync(id);
+            if (game == null) { return NotFound(game); }
             return Ok(game);
         }
 
@@ -41,8 +43,10 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] VideoGame game)
         {
-            await _context.VideoGames.AddAsync(game);
-            await _context.SaveChangesAsync();
+            await _context.VideoGames
+                .AddAsync(game);
+            await _context
+                .SaveChangesAsync();
             return Ok(game);
         }
 
@@ -50,26 +54,29 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] VideoGame gameChanges)
         {
-            var game = await _context.VideoGames.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if (game == null) { return NotFound(); }
+            var game = await _context.VideoGames
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
+            if (game == null) { return NotFound(game); }
             game.Title = gameChanges.Title;
             game.Description = gameChanges.Description;
             game.Price = gameChanges.Price;
             game.Type = gameChanges.Type;
             game.Rating = gameChanges.Rating;  
-            await _context.SaveChangesAsync();
-            return Ok();
+            await _context
+                .SaveChangesAsync();
+            return Ok(game);
         }
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var game = await _context.VideoGames.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if (game == null) { return NotFound(); }
+            var game = await _context.VideoGames.FindAsync(id);
+            if (game == null) { return NotFound(game); }
             _context.VideoGames.Remove(game);
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(game);
         }
     }
 }

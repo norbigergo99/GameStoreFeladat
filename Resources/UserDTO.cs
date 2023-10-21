@@ -2,7 +2,7 @@
 
 namespace GameStoreBeGNorbi.Resources
 {
-    public class CreateUserDTO
+    public record CreateUserDTO
     {
         [Required, DataType(DataType.EmailAddress), EmailAddress, MaxLength(150)]
         public string Email { get; set; }
@@ -16,7 +16,7 @@ namespace GameStoreBeGNorbi.Resources
         }
     }
 
-    public class UpdateUserDTO
+    public record UpdateUserDTO
     {
         [Required, DataType(DataType.EmailAddress), EmailAddress, MaxLength(150)]
         public string Email { get; set; }
