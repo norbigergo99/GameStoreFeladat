@@ -9,10 +9,10 @@ namespace GameStoreBeGNorbi.Models
         [Required, ForeignKey("User")]
         public int UserId { get; set; }
         [JsonIgnore]
-        public User? User { get; set; } 
+        public User? User { get; set; }
         [Required, ForeignKey("VideoGame")]
         public int VideoGameId { get; set; }
         [JsonIgnore]
-        public VideoGame? VideoGame { get; set; } 
+        public VideoGame? VideoGame { get; set; }
     }
 }

@@ -18,9 +18,9 @@ namespace GameStoreBeGNorbi.Models
         [Key]
         public int Id { get; set; }
         [Required, MaxLength(100)]
-        public string Title { get; set; } = null!;
+        public string Title { get; set; }
         [Required, MaxLength(255)]
-        public string Description { get; set; } = null!;
+        public string Description { get; set; }
         [Required, EnumDataType(typeof(Type))]
         public Type Type { get; set; }
         [Required]
@@ -28,11 +28,14 @@ namespace GameStoreBeGNorbi.Models
         [Required, Range(1, 5)]
         public int Rating { get; set; }
         [JsonIgnore]
-        public virtual ICollection<User> Users { get; set; }
-
-        public VideoGame()
+        public virtual ICollection<User> Users { get; set; } = new List<User>();
+        public VideoGame (string title, string description, Type type, int price, int rating)
         {
-            Users = new List<User>();
+            Title = title;
+            Description = description;
+            Type = type;
+            Price = price;
+            Rating = rating;
         }
     }
 }

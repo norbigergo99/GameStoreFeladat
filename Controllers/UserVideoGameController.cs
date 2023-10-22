@@ -1,5 +1,7 @@
 ﻿using GameStoreBeGNorbi.Context;
+using GameStoreBeGNorbi.Contracts;
 using GameStoreBeGNorbi.Models;
+using GameStoreBeGNorbi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,19 +13,18 @@ namespace GameStoreBeGNorbi.Controllers
     [ApiController]
     public class UserVideoGameController : ControllerBase
     {
-        private readonly GameStoreContext _context;
+        private readonly IRepository<UserVideoGame> _repository;
 
-        public UserVideoGameController(GameStoreContext gameStoreContext)
+        public UserVideoGameController(IRepository<UserVideoGame> repo)
         {
-            _context = gameStoreContext;
+            _repository = repo;
         }
 
         // GET: api/<UserController>
         [HttpGet]
         public async Task<IEnumerable<UserVideoGame>> GetAll()
         {
-            var all = await _context.UserVideoGame
-                .ToListAsync();
+            var all = await _repository.GetAll();
             return all;
         }
 
@@ -31,11 +32,11 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserVideoGame data)
         {
-            var user = await _context.Users
+            /*var user = await _repository.Users
                 .FindAsync(data.UserId);
-            var game = await _context.VideoGames
+            var game = await _repository.VideoGames
                 .FindAsync(data.VideoGameId);
-            var userVideoGame = await _context.UserVideoGame
+            var userVideoGame = await _repository.UserVideoGame
                 .Where(
                 a => a.UserId.Equals(data.UserId) && 
                 a.VideoGameId.Equals(data.VideoGameId))
@@ -44,10 +45,14 @@ namespace GameStoreBeGNorbi.Controllers
             if (user == null || game == null) { return NotFound(); }
             if (userVideoGame != null) { return BadRequest(userVideoGame); }
                         
-            await _context.UserVideoGame
+            await _repository.UserVideoGame
                 .AddAsync(data);
-            await _context
+            await _repository
                 .SaveChangesAsync();
+            return Ok(data);*/
+
+            await _repository.Add(data);
+            if (data == null) { return NotFound(); }
             return Ok(data);
         }
     }

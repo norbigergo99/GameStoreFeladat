@@ -14,7 +14,6 @@ namespace GameStoreBeGNorbi.Models
         [Required, MaxLength(255)]
         public string PasswordSalt { get; set; }
         public virtual ICollection<VideoGame> VideoGames { get; } = new List<VideoGame>();
-
         public User (string email, string passwordHash, string passwordSalt)
         {
             Email = email;

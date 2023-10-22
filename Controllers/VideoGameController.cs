@@ -1,4 +1,5 @@
 ﻿using GameStoreBeGNorbi.Context;
+using GameStoreBeGNorbi.Contracts;
 using GameStoreBeGNorbi.Models;
 using GameStoreBeGNorbi.Resources;
 using Microsoft.AspNetCore.Mvc;
@@ -13,19 +14,19 @@ namespace GameStoreBeGNorbi.Controllers
     [ApiController]
     public class VideoGameController : ControllerBase
     {
-        private readonly GameStoreContext _context;
+        private readonly IRepository<VideoGame> _repository;
 
-        public VideoGameController(GameStoreContext gameStoreContext)
+        public VideoGameController(IRepository<VideoGame> repo)
         {
-            _context = gameStoreContext;
+            _repository = repo;
         }
 
         // GET: api/<UserController>
         [HttpGet]
         public async Task<IEnumerable<VideoGame>> GetAll()
         {
-            var all = await _context.VideoGames
-                .ToListAsync();
+            var all = await _repository
+                .GetAll();
             return all;
         }
 
@@ -33,9 +34,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VideoGame>> GetById(int id)
         {
-            var game = await _context.VideoGames
-                .FindAsync(id);
-            if (game == null) { return NotFound(game); }
+            var game = await _repository
+                .GetById(id);
+            if (game == null) { return NotFound("Game not found"); }
             return Ok(game);
         }
 
@@ -43,10 +44,8 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] VideoGame game)
         {
-            await _context.VideoGames
-                .AddAsync(game);
-            await _context
-                .SaveChangesAsync();
+            await _repository
+                .Add(game);
             return Ok(game);
         }
 
@@ -54,17 +53,14 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] VideoGame gameChanges)
         {
-            var game = await _context.VideoGames
-                .Where(a => a.Id == id)
-                .FirstOrDefaultAsync();
-            if (game == null) { return NotFound(game); }
+            var game = await _repository.GetById(id);
+            if (game == null) { return NotFound("Game not found"); }
             game.Title = gameChanges.Title;
             game.Description = gameChanges.Description;
             game.Price = gameChanges.Price;
             game.Type = gameChanges.Type;
             game.Rating = gameChanges.Rating;  
-            await _context
-                .SaveChangesAsync();
+            await _repository.Update(game);
             return Ok(game);
         }
 
@@ -72,11 +68,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var game = await _context.VideoGames.FindAsync(id);
-            if (game == null) { return NotFound(game); }
-            _context.VideoGames.Remove(game);
-            await _context.SaveChangesAsync();
-            return Ok(game);
+            if(await _repository.GetById(id) == null) { return NotFound("Game not found"); }
+            await _repository.Delete(id);
+            return Ok();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GameStoreBeGNorbi.Context;
+using GameStoreBeGNorbi.Contracts;
 using GameStoreBeGNorbi.Models;
 using GameStoreBeGNorbi.Resources;
 using GameStoreBeGNorbi.Services;
@@ -14,20 +15,19 @@ namespace GameStoreBeGNorbi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly GameStoreContext _context;
+        private readonly IRepository<User> _repository;
 
-        public UserController(GameStoreContext gameStoreContext)
+        public UserController(IRepository<User> repo)
         {
-            _context = gameStoreContext;
+            _repository = repo;
         }
 
         // GET: api/<UserController>
         [HttpGet]
         public async Task<IEnumerable<User>> GetAll()
         {
-            var all = await _context.Users
-                .Include(a => a.VideoGames)
-                .ToListAsync();
+            var all = await _repository
+                .GetAll();
             return all;
         }
 
@@ -35,11 +35,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(int id)
         {
-            var user = await _context.Users
-                .Include(a => a.VideoGames)
-                .Where(a => a.Id.Equals(id))
-                .FirstOrDefaultAsync();
-            if (user == null) { return NotFound(user); }
+            var user = await _repository
+                .GetById(id);
+            if (user == null) { return NotFound("User not found"); }
             return Ok(user);
         }
 
@@ -47,9 +45,11 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserDTO dto)
         {
-            var salt = PasswordHasher.GenerateSalt();
+            var salt = PasswordHasher
+                .GenerateSalt();
             var passwordHasher = new PasswordHasher();
-            var hash = passwordHasher.HashPassword(dto.Password, salt);
+            var hash = passwordHasher
+                .HashPassword(dto.Password, salt);
 
             try
             {
@@ -58,15 +58,13 @@ namespace GameStoreBeGNorbi.Controllers
                     hash, 
                     salt 
                 );
-                await _context.Users
-                    .AddAsync(user);
-                await _context
-                    .SaveChangesAsync();
+                await _repository
+                    .Add(user);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(new { ErrorMessage = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -74,13 +72,12 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDTO userChanges)
         {
-            var user = await _context.Users
-                .Where(a => a.Id == id)
-                .FirstOrDefaultAsync();
-            if (user == null) { return NotFound(user); }
+            var user = await _repository
+                .GetById(id);
+            if (user == null) { return NotFound("User not found"); }
             user.Email = userChanges.Email;
-            await _context
-                .SaveChangesAsync();
+            await _repository
+                .Update(user);
             return Ok();
         }
 
@@ -88,14 +85,9 @@ namespace GameStoreBeGNorbi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var user = await _context.Users
-                .Where(a => a.Id == id)
-                .FirstOrDefaultAsync();
-            if(user == null) { return NotFound(user); }
-            _context.Users
-                .Remove(user);
-            await _context
-                .SaveChangesAsync();
+            if (await _repository.GetById(id) == null) { return NotFound("User not found"); }
+            await _repository
+                .Delete(id);
             return Ok();
         }
     }
