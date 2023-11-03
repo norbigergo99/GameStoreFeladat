@@ -59,7 +59,7 @@ namespace GameStoreBeGNorbi.Controllers
                     PasswordSalt = salt
                 };
                 await _repository.Add(user);
-                return Ok("User deleted");
+                return Ok("User created");
             }
             catch (Exception ex)
             {
