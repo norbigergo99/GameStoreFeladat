@@ -1,9 +1,6 @@
-﻿using GameStoreBeGNorbi.Context;
-using GameStoreBeGNorbi.Contracts;
+﻿using GameStoreBeGNorbi.Contracts;
 using GameStoreBeGNorbi.Models;
-using GameStoreBeGNorbi.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,10 +19,10 @@ namespace GameStoreBeGNorbi.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<IEnumerable<UserVideoGame>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserVideoGame>>> GetAll()
         {
             var all = await _repository.GetAll();
-            return all;
+            return Ok(all);
         }
 
         // POST api/<UserController>

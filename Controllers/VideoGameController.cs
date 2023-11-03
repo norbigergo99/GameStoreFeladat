@@ -23,7 +23,7 @@ namespace GameStoreBeGNorbi.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<IEnumerable<VideoGame>> GetAll()
+        public async Task<ActionResult<IEnumerable<VideoGame>>> GetAll()
         {
             var all = await _repository
                 .GetAll();

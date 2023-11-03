@@ -1,7 +1,9 @@
 ﻿using GameStoreBeGNorbi.Context;
 using GameStoreBeGNorbi.Contracts;
 using GameStoreBeGNorbi.Models;
+using GameStoreBeGNorbi.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace GameStoreBeGNorbi.Repositories
 {

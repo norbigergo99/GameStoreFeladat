@@ -1,13 +1,11 @@
 ﻿using GameStoreBeGNorbi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 
 namespace GameStoreBeGNorbi.Context
 {
     public class GameStoreContext : DbContext
     {
-        public GameStoreContext(DbContextOptions options) : base(options) {
-        }
+        public GameStoreContext(DbContextOptions options) : base(options) { }
 
         public DbSet<User> Users { get; set; } 
         public DbSet<VideoGame> VideoGames { get; set; }

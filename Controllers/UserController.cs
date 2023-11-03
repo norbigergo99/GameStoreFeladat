@@ -24,11 +24,11 @@ namespace GameStoreBeGNorbi.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
             var all = await _repository
                 .GetAll();
-            return all;
+            return Ok(all);
         }
 
         // GET api/<UserController>/5
@@ -53,14 +53,13 @@ namespace GameStoreBeGNorbi.Controllers
 
             try
             {
-                var user = new User(
-                    dto.Email,
-                    hash, 
-                    salt 
-                );
-                await _repository
-                    .Add(user);
-                return Ok();
+                var user = new User {
+                    Email = dto.Email,
+                    PasswordHash = hash,
+                    PasswordSalt = salt
+                };
+                await _repository.Add(user);
+                return Ok("User deleted");
             }
             catch (Exception ex)
             {
@@ -78,7 +77,7 @@ namespace GameStoreBeGNorbi.Controllers
             user.Email = userChanges.Email;
             await _repository
                 .Update(user);
-            return Ok();
+            return Ok(user);
         }
 
         // DELETE api/<UserController>/5
@@ -88,7 +87,7 @@ namespace GameStoreBeGNorbi.Controllers
             if (await _repository.GetById(id) == null) { return NotFound("User not found"); }
             await _repository
                 .Delete(id);
-            return Ok();
+            return Ok("User deleted");
         }
     }
 }
